@@ -2,7 +2,7 @@
   <v-card class="mx-auto" max-width="500">
     <v-card-title> Tasks </v-card-title>
     <v-card-text>
-      <v-form validate-on="submit lazy" @submit.prevent="submit">
+      <v-form validate-on="submit lazy" @submit.prevent="submit" v-model="valid">
         <v-container fluid >
           <v-row justify="center" >
             <!-- show posible errors -->
@@ -12,7 +12,7 @@
               </v-alert>
             </v-col>
             <v-col cols="12" md="10">
-              <v-text-field clearable variant="outlined" v-model="task">
+              <v-text-field clearable variant="outlined" v-model="task" :rules="rules.task">
               </v-text-field>
             </v-col>
             <v-col cols="2" md="2">
@@ -37,18 +37,24 @@ export default {
       task: '',
       loading: false,
       error: '',
+      rules: {
+        task: [
+          v => !!v || 'Task is required',
+          v => (v && v.length <= 500) || 'Task must be less than 500 characters',
+        ],
+      }
     }
   },
 
   methods: {
     async submit () {
+      if (!this.valid) return;
       this.loading = true;
       try {
-        const res = await httpClient.post('', {
+        await httpClient.post('', {
           task: this.task,
         });
         this.task = '';
-        console.log('res',res);
       } catch (error) {
         console.log(error);
         this.error = error.message;
