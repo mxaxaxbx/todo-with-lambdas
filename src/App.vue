@@ -44,7 +44,7 @@
                   <v-list-item-subtitle> {{ task.created }} </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn icon color="red" @click="deleteTask(task.id)">
+                  <v-btn icon color="red" @click="deleteTask(task)">
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
                 </v-list-item-action>
@@ -121,6 +121,18 @@ export default {
         this.error = error.message;
         // go back to previous state
         task.done = !task.done;
+        // go to up to page
+        window.scrollTo(0, 0);
+        console.log(error);
+      }
+    },
+
+    async deleteTask (task) {
+      try {
+        await httpClient.delete(`/${task.id}`);
+        await this.getTasks();
+      } catch (error) {
+        this.error = error.message;
         // go to up to page
         window.scrollTo(0, 0);
         console.log(error);
