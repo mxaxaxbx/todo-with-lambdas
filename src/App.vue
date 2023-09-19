@@ -104,6 +104,25 @@ export default {
         const { data } = await httpClient.get('');
         this.tasks = data.body;
       } catch (error) {
+        this.error = error.message;
+        console.log(error);
+      } finally {
+        window.scrollTo(0, 0);
+      }
+    },
+
+    async updateTask (task) {
+      try {
+        await httpClient.put(`/${task.id}`, {
+          ...task,
+        });
+        await this.getTasks();
+      } catch (error) {
+        this.error = error.message;
+        // go back to previous state
+        task.done = !task.done;
+        // go to up to page
+        window.scrollTo(0, 0);
         console.log(error);
       }
     },
